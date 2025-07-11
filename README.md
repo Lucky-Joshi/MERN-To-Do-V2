@@ -24,32 +24,32 @@ Anonymous users can manage tasks locally using a persistent `userId` stored in `
 
 1. Go to `backend/` folder:
 
-```sh
+```bash
 cd backend
 ```
 
 2. Install dependencies:
 
-```sh
+```bash
 npm install
 ```
 
 3. Create a `.env` file:
 
-```sh
+```
 PORT=5000
-MONGO_URI=your_mongodb_connection_string 
+MONGO_URI=your_mongodb_connection_string
 ```
 
 4. Start the server:
 
-```sh
+```bash
 npm run dev
 ```
 
 5. You should see:
 
-```bash
+```
 Server running on http://localhost:5000
 MongoDB Connected ✅
 ```
@@ -58,25 +58,25 @@ MongoDB Connected ✅
 
 1. Go to `todo-frontend/` folder:
 
-```sh
+```bash
 cd todo-frontend
 ```
 
 2. Install dependencies:
 
-```sh
+```bash
 npm install
 ```
 
 3. Start the React dev server:
 
-```sh
+```bash
 npm run dev
 ```
 
 4. App will be live at:
 
-```bash
+```
 http://localhost:5173
 ```
 
@@ -326,5 +326,3 @@ GET /api/tasks/:userId?filter=completed
 | React updates UI     |
 +----------------------+
 ```
-
----

@@ -38,7 +38,7 @@ npm install
 
 ```sh
 PORT=5000
-MONGO_URI=your_mongodb_connection_string
+MONGO_URI=your_mongodb_connection_string 
 ```
 
 4. Start the server:
@@ -49,7 +49,7 @@ npm run dev
 
 5. You should see:
 
-```
+```bash
 Server running on http://localhost:5000
 MongoDB Connected ✅
 ```
@@ -76,7 +76,7 @@ npm run dev
 
 4. App will be live at:
 
-```
+```bash
 http://localhost:5173
 ```
 

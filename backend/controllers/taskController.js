@@ -1,85 +1,80 @@
-import Task from '../models/Task.js';
+const Task = require("../models/Task");
 
-// 🔽 Get Tasks with Filters
-export const getTasks = async (req, res) => {
-  const { userId } = req.params;
-  const { filter = 'all' } = req.query;
+// Priority map for sorting
+const priorityOrder = { High: 1, Medium: 2, Low: 3, Lowest: 4 };
 
-  let query = { userId };
-  if (filter === 'completed') query.completed = true;
-  if (filter === 'trashed') query.trashed = true;
-  if (filter === 'all') query.trashed = false;
-
+exports.createTask = async (req, res) => {
   try {
-    const tasks = await Task.find(query).sort({ 
-      priority: 1, createdAt: -1 
-    });
-    res.json(tasks);
+    const task = await Task.create(req.body);
+    res.status(201).json(task);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
-// ➕ Create Task
-export const createTask = async (req, res) => {
-  const { userId, title, priority, description } = req.body;
-
+exports.getTasks = async (req, res) => {
   try {
-    const newTask = await Task.create({
-      userId, title, priority, description
+    const { userId } = req.params;
+    const { filter } = req.query;
+
+    let query = { userId };
+
+    if (filter === "completed") query.completed = true;
+    else if (filter === "trashed") query.trashed = true;
+    else query.trashed = false;
+
+    let tasks = await Task.find(query);
+
+    // Sort: uncompleted first, then by priority
+    tasks.sort((a, b) => {
+      if (a.completed !== b.completed) return a.completed ? 1 : -1;
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
     });
-    res.status(201).json(newTask);
+
+    res.status(200).json(tasks);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
-// ✅ Toggle Complete
-export const toggleComplete = async (req, res) => {
-  const { id } = req.params;
+exports.toggleDone = async (req, res) => {
   try {
-    const task = await Task.findById(id);
+    const task = await Task.findById(req.params.id);
     task.completed = !task.completed;
     await task.save();
-    res.json(task);
+    res.status(200).json(task);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
-// 🗑️ Soft Delete
-export const softDelete = async (req, res) => {
-  const { id } = req.params;
+exports.trashTask = async (req, res) => {
   try {
-    const task = await Task.findById(id);
+    const task = await Task.findById(req.params.id);
     task.trashed = true;
     await task.save();
-    res.json(task);
+    res.status(200).json(task);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
-// ♻️ Restore
-export const restoreTask = async (req, res) => {
-  const { id } = req.params;
+exports.restoreTask = async (req, res) => {
   try {
-    const task = await Task.findById(id);
+    const task = await Task.findById(req.params.id);
     task.trashed = false;
     await task.save();
-    res.json(task);
+    res.status(200).json(task);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
 
-// ❌ Permanent Delete
-export const deleteTask = async (req, res) => {
-  const { id } = req.params;
+exports.deleteTask = async (req, res) => {
   try {
-    await Task.findByIdAndDelete(id);
-    res.json({ message: 'Task permanently deleted' });
+    await Task.findByIdAndDelete(req.params.id);
+    res.status(204).send();
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(400).json({ error: err.message });
   }
 };
